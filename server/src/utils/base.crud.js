@@ -1,4 +1,4 @@
-const createOne = collection => (req, res) => {
+export const createOne = collection => (req, res) => {
   try {
     collection.createOne(req.body)
       .then(data => {
@@ -11,7 +11,7 @@ const createOne = collection => (req, res) => {
   }
 }
 
-const getAll = collection => (req, res) => {
+export const getAll = collection => (req, res) => {
   try {
     collection.getAll()
       .then(data => {
@@ -24,7 +24,7 @@ const getAll = collection => (req, res) => {
   }
 }
 
-const updateOne = collection => (req, res) => {
+export const updateOne = collection => (req, res) => {
   try {
     collection.updateOne(oldData, newData)
       .then(data => {
@@ -37,7 +37,7 @@ const updateOne = collection => (req, res) => {
   }
 }
 
-const deleteOne = collection => (req, res) => {
+export const deleteOne = collection => (req, res) => {
   try {
     collection.deleteOne(data)
       .then(data => {
@@ -50,11 +50,9 @@ const deleteOne = collection => (req, res) => {
   }
 }
 
-const makeCRUDController = collection => ({
+export default collection => ({
   createOne: createOne(collection),
   getAll: getAll(collection),
   updateOne: updateOne(collection),
   deleteOne: deleteOne(collection)
 })
-
-export default makeCRUDController;
