@@ -1,6 +1,7 @@
 import connectdb from './base.db'
 import { SERVER_PORT, SERVER_HOST } from './base.config'
 import UserCRUD from '../crud/user.crud'
+import RoleCRUD from '../crud/role.crud'
 import { json, urlencoded } from 'body-parser'
 import express from 'express';
 
@@ -8,10 +9,17 @@ const app = express();
 app.use(json())
 app.use(urlencoded({ extended: true }))
 app.disable('x-powered-by')
-app.get('/user', UserCRUD.getAllUser)
-app.post('/user/add', UserCRUD.createUser)
-app.put('/user/:id', UserCRUD.updateUser)
-app.delete('/user/:id', UserCRUD.deleteUser)
+
+
+app.get('/user', UserCRUD.getAll)
+app.post('/user/add', UserCRUD.createOne)
+app.put('/user/:id', UserCRUD.updateOne)
+app.delete('/user/:id', UserCRUD.deleteOne)
+
+app.get('/role', RoleCRUD.getAll)
+app.post('/role/add', RoleCRUD.createOne)
+app.put('/role/:id', RoleCRUD.updateOne)
+app.delete('/role/:id', RoleCRUD.deleteOne)
 
 
 export const start = async () => {

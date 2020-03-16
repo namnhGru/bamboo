@@ -1,4 +1,4 @@
-const createUser = collection => (req, res) => {
+const createOne = collection => (req, res) => {
   try {
     collection.createOne(req.body)
       .then(data => {
@@ -11,7 +11,7 @@ const createUser = collection => (req, res) => {
   }
 }
 
-const getAllUser = collection => (req, res) => {
+const getAll = collection => (req, res) => {
   try {
     collection.getAll()
       .then(data => {
@@ -24,7 +24,7 @@ const getAllUser = collection => (req, res) => {
   }
 }
 
-const updateUser = collection => (req, res) => {
+const updateOne = collection => (req, res) => {
   try {
     collection.updateOne(oldData, newData)
       .then(data => {
@@ -37,7 +37,7 @@ const updateUser = collection => (req, res) => {
   }
 }
 
-const deleteUser = collection => (req, res) => {
+const deleteOne = collection => (req, res) => {
   try {
     collection.deleteOne(data)
       .then(data => {
@@ -51,10 +51,10 @@ const deleteUser = collection => (req, res) => {
 }
 
 const makeCRUDController = collection => ({
-  createUser: createUser(collection),
-  getAllUser: getAllUser(collection),
-  updateUser: updateUser(collection),
-  deleteUser: deleteUser(collection)
+  createOne: createOne(collection),
+  getAll: getAll(collection),
+  updateOne: updateOne(collection),
+  deleteOne: deleteOne(collection)
 })
 
 export default makeCRUDController;
