@@ -1,2 +1,2 @@
-import { start } from './src/utils/server'
+import { start } from './src/utils/base.server'
 start()

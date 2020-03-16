@@ -1,23 +1,14 @@
 import { model, Schema } from 'mongoose';
 
 var roleSchema = new Schema({
-  username: {
+  rolename: {
     type: String,
     required: true,
     unique: true
   },
-  password: {
+  description: {
     type: String,
     required: true,
-  },
-  fullName: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
   },
   status: {
     type: Boolean,
@@ -30,5 +21,5 @@ var roleSchema = new Schema({
   },
 });
 
-export default model('User', userSchema);
+export default model('Role', roleSchema);
 
