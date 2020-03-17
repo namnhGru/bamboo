@@ -4,6 +4,7 @@ import UserCRUD from '../crud/user.crud'
 import RoleCRUD from '../crud/role.crud'
 import PermissionCRUD from '../crud/permission.crud'
 import MenuCRUD from '../crud/menu.crud'
+import { signin, signup } from './base.auth'
 import { json, urlencoded } from 'body-parser'
 import express from 'express';
 
@@ -31,7 +32,8 @@ app.post('/menu/add', MenuCRUD.createOne)
 app.put('/menu/:id', MenuCRUD.updateOne)
 app.delete('/menu/:id', MenuCRUD.deleteOne)
 
-
+app.post('/signin', signin)
+app.post('/signup', signup)
 
 export const start = async () => {
   try {
