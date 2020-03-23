@@ -1,19 +1,12 @@
 <template>
   <v-app>
-      <SignIn/>
+   <router-view></router-view>
   </v-app>
 </template>
 
 <script>
-import SignIn from './views/SignIn';
-
 export default {
   name: 'App',
-
-  components: {
-    SignIn,
-  },
-
   data: () => ({
     //
   }),

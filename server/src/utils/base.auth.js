@@ -59,9 +59,9 @@ export const signin = async (req, res) => {
 
 export const protect = (req, res, next) => {
   const bearer = req.headers.authorization
-
+  console.log(bearer)
   if (!bearer || !bearer.startsWith('Bearer ')) {
-    return res.status(401).end()
+    return res.status(401).send(lang_EN.invalidAuth)
   }
   verifyToken(bearer.split('Bearer ')[1].trim())
   .then(payload => 
@@ -70,7 +70,7 @@ export const protect = (req, res, next) => {
       req.user = user;
       next()
     })
-    .catch(e => res.status(401).end())
+      .catch(e => res.status(401).send(lang_EN.invalidAuth))
   )
-  .catch(e => res.status(401).end())
+  .catch(e => res.status(401).json({ status: false }))
 }

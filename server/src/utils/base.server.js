@@ -4,21 +4,27 @@ import UserCRUD from '../crud/user.crud'
 import RoleCRUD from '../crud/role.crud'
 import PermissionCRUD from '../crud/permission.crud'
 import MenuCRUD from '../crud/menu.crud'
-import { signin, signup } from './base.auth'
+import { signin, signup, protect } from './base.auth'
 import { json, urlencoded } from 'body-parser'
 import express from 'express';
+import cors from 'cors'
 
 const app = express();
 app.use(json())
+app.options('*', cors())
 app.use(urlencoded({ extended: true }))
 app.disable('x-powered-by')
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:8080"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
   next();
 });
 
+app.post('/signin', signin)
+app.post('/signup', signup)
+
+app.use('/', protect)
 
 app.get('/user', UserCRUD.getAll)
 app.post('/user/add', UserCRUD.createOne)
@@ -38,8 +44,7 @@ app.post('/menu/add', MenuCRUD.createOne)
 app.put('/menu/:id', MenuCRUD.updateOne)
 app.delete('/menu/:id', MenuCRUD.deleteOne)
 
-app.post('/signin', signin)
-app.post('/signup', signup)
+
 
 export const start = async () => {
   try {

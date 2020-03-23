@@ -23,7 +23,7 @@
               <v-spacer />
             </v-toolbar>
             <v-card-text>
-              <v-form>
+              <v-form @submit="signin">
                 <v-text-field
                   v-model="email"
                   label="Login"
@@ -42,7 +42,7 @@
                 />
               </v-form>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions> 
               <v-spacer />
               <v-btn color="primary" @click="signin">Sign in</v-btn>
             </v-card-actions>
@@ -55,19 +55,22 @@
 
 <script>
 import axios from 'axios';
-  export default {
-    name: 'SignIn',
-    data: () => ({
-      email: '',
-      password: '',
-    }),
-    methods: {
-      signin() {
-        axios.post('http://localhost:2000/signin', {
-          email: this.email,
-          password: this.password
-        })
-      }
+export default {
+  name: 'SignIn',
+  data: () => ({
+    email: '',
+    password: '',
+  }),
+  methods: {
+    async signin() {
+      const {data: {token}} = await axios.post('http://localhost:2000/signin', {
+        email: this.email,
+        password: this.password
+      })
+      this.$store.commit('changeInMemoryToken', token)
+      axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
+      this.$router.push('/dashboard')
     }
   }
+}
 </script>
