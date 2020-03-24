@@ -1,11 +1,12 @@
-import { JWT_SECRET, JWT_EXPIRES } from './base.config'
+import { JWT_SECRET, JWT_EXPIRES, REFRESH_TOKEN_EXPIRES } from './base.config'
 import { lang_EN } from './base.lang'
 import UserCollection from '../collection/user.collection'
 import jwt from 'jsonwebtoken'
+import { uuid } from 'uuidv4'
 
 export const newToken = user => {
   return jwt.sign({ id: user._id }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES
+    expiresIn: `${JWT_EXPIRES}m`
   })
 }
 
@@ -16,6 +17,8 @@ export const verifyToken = token =>
       resolve(payload)
     })
   })
+
+export const newTokenExpiry = () => new Date(new Date().getTime() + JWT_EXPIRES * 60 * 1000)
 
 export const signup = (req, res) => {
   if (!req.body.email || !req.body.password) {
@@ -44,11 +47,27 @@ export const signin = async (req, res) => {
   try {
     UserCollection.getOne({ email: req.body.email, password: req.body.password })
       .then(user => {
-        user ? res.status(200).send({ token: newToken(user) }) : res.status(401).send(lang_EN.invalidAuth)
+        const refresh_token = uuid()
+        // const refresh_token_data = {
+        //   userId: user._id,
+        //   refresh_token,
+        //   eat: new Date(new Date().getTime() + JWT_EXPIRES * 60 * 1000)
+        // }
+        res.cookie('refresh_token', refresh_token, {
+          maxAge: REFRESH_TOKEN_EXPIRES * 60 * 1000, // convert mins to milliseconds,
+          httpOnly: true,
+          secure: false
+        });
+        user 
+        ? res.status(200).json({ 
+          token: newToken(user),
+          tokenExpiry: newTokenExpiry()
+        }) 
+        : res.status(401).send(lang_EN.invalidAuth);
       } 
       )
       .catch(e => {
-        console.log(e)
+        console.error(e)
         res.status(401).send(lang_EN.invalidAuth)
       })
   } catch (e) {
@@ -57,20 +76,18 @@ export const signin = async (req, res) => {
   }
 }
 
-export const protect = (req, res, next) => {
+export const protect = async (req, res, next) => {
   const bearer = req.headers.authorization
   console.log(bearer)
   if (!bearer || !bearer.startsWith('Bearer ')) {
     return res.status(401).send(lang_EN.invalidAuth)
   }
-  verifyToken(bearer.split('Bearer ')[1].trim())
-  .then(payload => 
-    UserCollection.getOne({ _id: payload.id})
-    .then(user => {
-      req.user = user;
-      next()
-    })
-      .catch(e => res.status(401).send(lang_EN.invalidAuth))
-  )
-  .catch(e => res.status(401).json({ status: false }))
+  try {
+    const payload = await verifyToken(bearer.split('Bearer ')[1].trim())
+    req.user = await UserCollection.getOne({ _id: payload.id})
+    next()
+  } catch (e) { 
+    console.error(e)
+    res.status(401).json({ status: 'token error' })
+  }
 }

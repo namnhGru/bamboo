@@ -17,7 +17,9 @@ export default {
   methods: {
     signout() {
       this.$store.commit('changeInMemoryToken', '')
+      this.$store.commit('changeInMemoryTokenExpiry', '')
       this.$router.push('/signin')
+      window.localStorage.setItem('logout', Date.now())
     },
     fetchUsers() {
       axios.get("http://localhost:2000/user")
@@ -25,9 +27,17 @@ export default {
         this.users = data.data
       })
       .catch(console.error)
-    }
+    },
+    syncSignOut(event) {
+      if (event.key == 'logout') {
+        this.$store.commit('changeInMemoryToken', '')
+        this.$store.commit('changeInMemoryTokenExpiry', '')
+        if (this.$route.path !== '/signin') this.$router.push('/signin').catch(console.error)
+      }
+    },
   },
   created() {
+    window.addEventListener('storage', this.syncSignOut)
     this.fetchUsers();
   }
 }

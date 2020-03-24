@@ -8,18 +8,18 @@ import { signin, signup, protect } from './base.auth'
 import { json, urlencoded } from 'body-parser'
 import express from 'express';
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 
 const app = express();
 app.use(json())
-app.options('*', cors())
 app.use(urlencoded({ extended: true }))
-app.disable('x-powered-by')
+// app.disable('x-powered-by')
+app.use(cookieParser())
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-  next();
-});
+app.use(cors({
+  credentials: true,
+  origin: "http://localhost:8080"
+}))
 
 app.post('/signin', signin)
 app.post('/signup', signup)

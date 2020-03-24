@@ -4,4 +4,5 @@ export const DB_HOST = 'mongodb://localhost';
 export const DB_PORT = 27017;
 export const DB_DATABASE = 'test'
 export const JWT_SECRET = 'namnh'
-export const JWT_EXPIRES = '10s'
+export const JWT_EXPIRES = 2
+export const REFRESH_TOKEN_EXPIRES = 60*24*30

@@ -8,6 +8,7 @@ import { store } from '../store/auth.store'
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/', redirect: '/dashboard'},
   { path: '/signin', component: SignIn },
   { path: '/dashboard', component: Dashboard },
 ]
@@ -17,6 +18,7 @@ export const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  silentRefresh();
   const currentToken = store.getters.currentToken
   if (!currentToken && to.path != '/signin' ) {
     next('/signin')
@@ -35,3 +37,22 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
+async function silentRefresh() {
+  if (subMinute(new Date(store.getters.currentTokenExpiry), 1) <= new Date()) {
+    store.commit('changeInMemoryToken', '')
+    try {
+      const { data: {token, tokenExpiry} } = await axios.post('http://localhost:2000/signin', store.getters.currentUser)
+      store.commit('changeInMemoryToken', token)
+      store.commit('changeInMemoryTokenExpiry', tokenExpiry)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+}
+
+function subMinute(date, minute) {
+  console.log(new Date())
+  console.log(new Date(date.getTime() - minute * 60 * 1000))
+  return new Date(date.getTime() - minute * 60 * 1000)
+}

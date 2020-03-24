@@ -63,11 +63,16 @@ export default {
   }),
   methods: {
     async signin() {
-      const {data: {token}} = await axios.post('http://localhost:2000/signin', {
+      const {data: {token, tokenExpiry}} = await axios.post('http://localhost:2000/signin', {
+        email: this.email,
+        password: this.password
+      }, { withCredentials: true})
+      this.$store.commit('changeInMemoryToken', token)
+      this.$store.commit('changeInMemoryTokenExpiry', tokenExpiry)
+      this.$store.commit('changeUser', {
         email: this.email,
         password: this.password
       })
-      this.$store.commit('changeInMemoryToken', token)
       axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
       this.$router.push('/dashboard')
     }
