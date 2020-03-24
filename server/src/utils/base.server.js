@@ -4,6 +4,7 @@ import UserCRUD from '../crud/user.crud'
 import RoleCRUD from '../crud/role.crud'
 import PermissionCRUD from '../crud/permission.crud'
 import MenuCRUD from '../crud/menu.crud'
+import TokenCRUD, { refreshToken } from '../crud/token.crud'
 import { signin, signup, protect } from './base.auth'
 import { json, urlencoded } from 'body-parser'
 import express from 'express';
@@ -23,6 +24,7 @@ app.use(cors({
 
 app.post('/signin', signin)
 app.post('/signup', signup)
+app.post('/refresh_token', refreshToken)
 
 app.use('/', protect)
 
@@ -43,6 +45,7 @@ app.get('/menu', MenuCRUD.getAll)
 app.post('/menu/add', MenuCRUD.createOne)
 app.put('/menu/:id', MenuCRUD.updateOne)
 app.delete('/menu/:id', MenuCRUD.deleteOne)
+
 
 
 

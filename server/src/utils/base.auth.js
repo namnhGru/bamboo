@@ -1,4 +1,5 @@
 import { JWT_SECRET, JWT_EXPIRES, REFRESH_TOKEN_EXPIRES } from './base.config'
+import TokenCollection from '../collection/token.collection'
 import { lang_EN } from './base.lang'
 import UserCollection from '../collection/user.collection'
 import jwt from 'jsonwebtoken'
@@ -20,22 +21,16 @@ export const verifyToken = token =>
 
 export const newTokenExpiry = () => new Date(new Date().getTime() + JWT_EXPIRES * 60 * 1000)
 
-export const signup = (req, res) => {
+export const signup = async (req, res) => {
   if (!req.body.email || !req.body.password) {
     return res.status(400).send({ message: lang_EN.missingAuth })
   }
   try {
-    UserCollection.createOne(req.body)
-    .then(user => 
-      res.status(201).send({ token: newToken(user) })
-    )
-    .catch(err => {
-      console.error(err)
-      res.status(401).json({ err: err.errmsg });
-    })
-  } catch (e) {
-    console.error(e)
-    return res.status(500).end()
+    const user = await UserCollection.createOne(req.body)
+    res.status(201).send({ token: newToken(user) })
+  } catch (err) {
+    console.error(err)
+    res.status(401).json({ err: err.errmsg });
   }
 }
 
@@ -45,31 +40,23 @@ export const signin = async (req, res) => {
   }
 
   try {
-    UserCollection.getOne({ email: req.body.email, password: req.body.password })
-      .then(user => {
-        const refresh_token = uuid()
-        // const refresh_token_data = {
-        //   userId: user._id,
-        //   refresh_token,
-        //   eat: new Date(new Date().getTime() + JWT_EXPIRES * 60 * 1000)
-        // }
-        res.cookie('refresh_token', refresh_token, {
-          maxAge: REFRESH_TOKEN_EXPIRES * 60 * 1000, // convert mins to milliseconds,
-          httpOnly: true,
-          secure: false
-        });
-        user 
-        ? res.status(200).json({ 
-          token: newToken(user),
-          tokenExpiry: newTokenExpiry()
-        }) 
-        : res.status(401).send(lang_EN.invalidAuth);
-      } 
-      )
-      .catch(e => {
-        console.error(e)
-        res.status(401).send(lang_EN.invalidAuth)
-      })
+    const user = await UserCollection.getOne({ email: req.body.email, password: req.body.password })
+    console.log(user, req.body)
+    const refresh_token = uuid()
+    TokenCollection.updateOne({user: user._id}, {
+      token: refresh_token,
+      user: user._id,
+      exp: new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRES * 60 * 1000)
+    })
+    res.cookie('refresh_token', refresh_token, {
+      maxAge: REFRESH_TOKEN_EXPIRES * 60 * 1000, // convert mins to milliseconds,
+      httpOnly: true,
+      secure: false
+    });
+    res.status(200).json({ 
+      token: newToken(user),
+      tokenExpiry: newTokenExpiry()
+    }) 
   } catch (e) {
     console.error(e)
     res.status(500).end()
