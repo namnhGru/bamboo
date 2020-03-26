@@ -74,16 +74,17 @@ export default {
         password: this.password
       })
       axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
+      window.localStorage.setItem('login', Date.now())
       this.$router.push('/dashboard')
     },
-    // async syncSignin(event) {
-    //   if (event.key == 'login') {
-    //     await axios.post('http://localhost:2000/delete_refresh')
-    //   }
-    // }
+    syncSignin(event) {
+      if (event.key == 'login') {
+        if (this.$route.path !== '/dashboard') this.$router.go('/dashboard').catch(console.error)
+      }
+    }
   },
-  // created() {
-  //   window.addEventListener('storage', this.syncSignin)
-  // }
+  created() {
+    window.addEventListener('storage', this.syncSignin)
+  }
 }
 </script>
