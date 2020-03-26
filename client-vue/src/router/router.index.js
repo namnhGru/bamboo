@@ -9,7 +9,13 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/', redirect: '/dashboard'},
-  { path: '/signin', component: SignIn },
+  { path: '/signin', component: SignIn, beforeEnter: (to, from, next) => {
+    if (store.getters.currentToken && from.path != '/signin') {
+      next(from.path)
+    } else {
+      next();
+    }
+  }},
   { path: '/dashboard', component: Dashboard },
 ]
 
@@ -18,27 +24,28 @@ export const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  silentRefresh();
-  const currentToken = store.getters.currentToken
-  if (!currentToken && to.path != '/signin' ) {
-    next('/signin')
-  } else {
-    axios.defaults.headers.common.authorization = `Bearer ${currentToken}`
-    axios.interceptors.response.use(function (response) {
-      // Any status code that lie within the range of 2xx cause this function to trigger
-      // Do something with response data
-      return response;
-    }, function (error) {
-      // Any status codes that falls outside the range of 2xx cause this function to trigger
-      // Do something with response error
+  silentRefresh().then(() => {
+    const currentToken = store.getters.currentToken
+    if (!currentToken && to.path != '/signin' ) {
       next('/signin')
-      return Promise.reject(error);
-    });
-    next()
-  }
+    } else {
+      axios.defaults.headers.common.authorization = `Bearer ${currentToken}`
+      axios.interceptors.response.use(function (response) {
+        // Any status code that lie within the range of 2xx cause this function to trigger
+        // Do something with response data
+        return response;
+      }, function (error) {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        next('/signin')
+        return Promise.reject(error);
+      });
+      next()
+    }
+  }).catch(console.error)
 })
 
-async function silentRefresh() {
+export async function silentRefresh() {
   if (subMinute(new Date(store.getters.currentTokenExpiry), 1) <= new Date()) {
     store.commit('changeInMemoryToken', '')
     try {
@@ -54,7 +61,5 @@ async function silentRefresh() {
 }
 
 function subMinute(date, minute) {
-  console.log(new Date())
-  console.log(new Date(date.getTime() - minute * 60 * 1000))
   return new Date(date.getTime() - minute * 60 * 1000)
 }

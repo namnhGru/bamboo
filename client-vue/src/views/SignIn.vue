@@ -75,7 +75,15 @@ export default {
       })
       axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
       this.$router.push('/dashboard')
-    }
-  }
+    },
+    // async syncSignin(event) {
+    //   if (event.key == 'login') {
+    //     await axios.post('http://localhost:2000/delete_refresh')
+    //   }
+    // }
+  },
+  // created() {
+  //   window.addEventListener('storage', this.syncSignin)
+  // }
 }
 </script>
