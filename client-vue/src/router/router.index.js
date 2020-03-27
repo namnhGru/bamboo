@@ -51,7 +51,6 @@ export async function silentRefresh() {
     try {
       axios.defaults.withCredentials = true
       const { data: {token, tokenExpiry} } = await axios.post('http://localhost:2000/refresh_token', store.getters.currentUser )
-      // const { data: {token, tokenExpiry} } = await axios.post('http://localhost:2000/signin', store.getters.currentUser)
       store.commit('changeInMemoryToken', token)
       store.commit('changeInMemoryTokenExpiry', tokenExpiry)
     } catch (err) {

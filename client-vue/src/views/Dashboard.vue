@@ -16,10 +16,8 @@ export default {
   }),
   methods: {
     signout() {
-      this.$store.commit('changeInMemoryToken', '')
-      this.$store.commit('changeInMemoryTokenExpiry', '')
-      this.$router.push('/signin')
       window.localStorage.setItem('logout', Date.now())
+      this.signOutFlow()
     },
     fetchUsers() {
       axios.get("http://localhost:2000/user")
@@ -30,14 +28,15 @@ export default {
     },
     syncSignOut(event) {
       if (event.key == 'logout') {
-        this.$store.commit('changeInMemoryToken', '')
-        this.$store.commit('changeInMemoryTokenExpiry', '')
-        console.log('before delete')
-        axios.post("http://localhost:2000/delete_refresh")
-        console.log('after delete')
-        if (this.$route.path !== '/signin') this.$router.push('/signin').catch(console.error)
+        this.signOutFlow()
       }
     },
+    async signOutFlow() {
+      this.$store.commit('changeInMemoryToken', '')
+      this.$store.commit('changeInMemoryTokenExpiry', '')
+      await axios.post("http://localhost:2000/delete_refresh")
+      if (this.$route.path !== '/signin') this.$router.push('/signin').catch(console.error)
+    }
   },
   created() {
     window.addEventListener('storage', this.syncSignOut)

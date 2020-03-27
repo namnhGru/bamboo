@@ -62,7 +62,16 @@ export default {
     password: '',
   }),
   methods: {
-    async signin() {
+    signin() {
+      window.localStorage.setItem('login', Date.now())
+      this.signInFlow()
+    },
+    syncSignin(event) {
+      if (event.key == 'login') {
+        this.signInFlow()
+      }
+    },
+    async signInFlow() {
       const {data: {token, tokenExpiry}} = await axios.post('http://localhost:2000/signin', {
         email: this.email,
         password: this.password
@@ -74,13 +83,7 @@ export default {
         password: this.password
       })
       axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
-      window.localStorage.setItem('login', Date.now())
-      this.$router.push('/dashboard')
-    },
-    syncSignin(event) {
-      if (event.key == 'login') {
-        if (this.$route.path !== '/dashboard') this.$router.go('/dashboard').catch(console.error)
-      }
+      if (this.$route.path !== '/dashboard') this.$router.push('/dashboard').catch(console.error)
     }
   },
   created() {

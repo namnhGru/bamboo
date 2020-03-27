@@ -4,6 +4,7 @@ import { lang_EN } from './base.lang'
 import UserCollection from '../collection/user.collection'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
+import bcrypt from 'bcrypt'
 
 export const newToken = user => {
   return jwt.sign({ id: user._id }, JWT_SECRET, {
@@ -40,23 +41,32 @@ export const signin = async (req, res) => {
   }
 
   try {
-    const user = await UserCollection.getOne({ email: req.body.email, password: req.body.password })
-    console.log(user, req.body)
-    const refresh_token = uuid()
-    TokenCollection.updateOne({user: user._id}, {
-      token: refresh_token,
-      user: user._id,
-      exp: new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRES * 60 * 1000)
+    const user = await UserCollection.getOne({ email: req.body.email})
+    const comparePasswordResult = await new Promise((resolve, reject) =>{
+      bcrypt.compare(req.body.password, user.password, function (err, result) {
+        if (err) reject(err)
+        resolve(result)
+      })
     })
-    res.cookie('refresh_token', refresh_token, {
-      maxAge: REFRESH_TOKEN_EXPIRES * 60 * 1000, // convert mins to milliseconds,
-      httpOnly: true,
-      secure: false
-    });
-    res.status(200).json({ 
-      token: newToken(user),
-      tokenExpiry: newTokenExpiry()
-    }) 
+    if (comparePasswordResult) {
+      const refresh_token = uuid()
+      TokenCollection.updateOne({user: user._id}, {
+        token: refresh_token,
+        user: user._id,
+        exp: new Date(new Date().getTime() + REFRESH_TOKEN_EXPIRES * 60 * 1000)
+      })
+      res.cookie('refresh_token', refresh_token, {
+        maxAge: REFRESH_TOKEN_EXPIRES * 60 * 1000, // convert mins to milliseconds,
+        httpOnly: true,
+        secure: false
+      });
+      res.status(200).json({ 
+        token: newToken(user),
+        tokenExpiry: newTokenExpiry()
+      }) 
+    } else {
+      throw new Error('password miss match')
+    }
   } catch (e) {
     console.error(e)
     res.status(500).end()

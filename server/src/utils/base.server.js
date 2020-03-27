@@ -31,7 +31,7 @@ app.use('/', protect)
 
 app.get('/user', UserCRUD.getAll)
 app.post('/user/add', UserCRUD.createOne)
-app.put('/user/:id', UserCRUD.updateOne)
+app.put('/user/update', UserCRUD.updateOne)
 app.delete('/user/:id', UserCRUD.deleteOne)
 
 app.get('/role', RoleCRUD.getAll)
