@@ -86,8 +86,11 @@ export default {
       if (this.$route.path !== '/dashboard') this.$router.push('/dashboard').catch(console.error)
     }
   },
-  created() {
+  mounted() {
     window.addEventListener('storage', this.syncSignin)
+  },
+  beforeDestroy() {
+    window.removeEventListener('storage', this.syncSignin)
   }
 }
 </script>

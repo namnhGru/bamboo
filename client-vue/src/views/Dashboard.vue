@@ -38,9 +38,12 @@ export default {
       if (this.$route.path !== '/signin') this.$router.push('/signin').catch(console.error)
     }
   },
-  created() {
+  mounted() {
+    this.fetchUsers()
     window.addEventListener('storage', this.syncSignOut)
-    this.fetchUsers();
+  },
+  beforeDestroy() {
+    window.removeEventListener('storage', this.syncSignOut)
   }
 }
 </script>
