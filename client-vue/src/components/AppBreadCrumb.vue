@@ -21,15 +21,6 @@ export default {
       }))
     }
   },
-  data: () => ({
-    items: [
-      {
-        text: 'Dashboard',
-        disabled: false,
-        href: 'breadcrumbs_dashboard',
-      },
-    ],
-  }),
 }
 </script>
 

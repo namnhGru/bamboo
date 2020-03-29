@@ -11,9 +11,6 @@
 <script>
 export default {
   name: 'App',
-  data: () => ({
-    features: 'hello'
-  }),
   computed: {
     layout() {
       return `${this.$route.meta.layout || "default"}-layout`
