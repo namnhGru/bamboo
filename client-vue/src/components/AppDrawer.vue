@@ -1,10 +1,9 @@
 <template>
-  <v-container>
     <v-navigation-drawer
       v-model="drawer"
-      :color="color"
-      absolute
       dark
+      color="primary"
+      app
     >
       <v-list
         dense
@@ -25,36 +24,42 @@
         <v-divider></v-divider>
 
         <v-list-item
-          v-for="item in items"
-          :key="item.title"
+          v-for="feature in features"
+          :key="feature.name1"
           link
+          @click="goToMenu(feature.link)"
         >
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon>{{feature.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>{{ feature.name1}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-  </v-container>
+  
 </template>
 
 <script>
 export default {
+  props: {
+    features: {
+      type: Array,
+      required: true
+    }
+  },
   data () {
     return {
       drawer: true,
-      items: [
-        { title: 'Dashboard', icon: 'mdi-view-dashboard' },
-        { title: 'Photos', icon: 'mdi-image' },
-        { title: 'About', icon: 'mdi-help-box' },
-      ],
-      color: 'primary',
     }
   },
+  methods: {
+    goToMenu(url) {
+      if (this.$route.path != url) this.$router.push(url)
+    }
+  }
 }
 </script>
 

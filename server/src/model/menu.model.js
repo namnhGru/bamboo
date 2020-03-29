@@ -4,6 +4,7 @@ var menuSchema = new Schema({
   icon: String,
   name1: String,
   name2: String,
+  setting: String,
   link: String,
   order: {
     type: Number,

@@ -80,7 +80,6 @@ export default {
       this.$store.commit('changeInMemoryTokenExpiry', tokenExpiry)
       this.$store.commit('changeUser', {
         email: this.email,
-        password: this.password
       })
       axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
       if (this.$route.path !== '/dashboard') this.$router.push('/dashboard').catch(console.error)

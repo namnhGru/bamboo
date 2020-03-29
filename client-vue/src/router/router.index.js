@@ -1,5 +1,3 @@
-import SignIn from '../views/SignIn.vue'
-import Dashboard from '../views/Dashboard.vue'
 import VueRouter from 'vue-router'
 import Vue from 'vue'
 import axios from 'axios'
@@ -13,7 +11,7 @@ const routes = [
     redirect: '/dashboard'
   },
   { path: '/signin',
-    component: SignIn,
+    component: () => import('../views/SignIn.vue'),
     meta: {
       layout: 'only-content'
     },
@@ -27,7 +25,11 @@ const routes = [
   },
   { 
     path: '/dashboard', 
-    component: Dashboard 
+    component: () => import('../views/Dashboard.vue')
+  },
+  { 
+    path: '/setting', 
+    component: () => import('../views/Setting.vue') 
   },
 ]
 
@@ -62,9 +64,10 @@ export async function silentRefresh() {
     store.commit('changeInMemoryToken', '')
     try {
       axios.defaults.withCredentials = true
-      const { data: {token, tokenExpiry} } = await axios.post(`${process.env.VUE_APP_EXPRESS_API}/refresh_token`, store.getters.currentUser )
+      const { data: {token, tokenExpiry, user} } = await axios.post(`${process.env.VUE_APP_EXPRESS_API}/refresh_token`)
       store.commit('changeInMemoryToken', token)
       store.commit('changeInMemoryTokenExpiry', tokenExpiry)
+      store.commit('changeUser', { email: user })
     } catch (err) {
       console.error(err)
     }
