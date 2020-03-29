@@ -3,8 +3,13 @@ import vuetify from './plugins/vuetify';
 import { router } from './router/router.index'
 import { store } from './store/auth.store'
 import App from './App.vue'
+import Default from './layouts/Default.vue'
+import OnlyContent from './layouts/OnlyContent.vue'
 
+Vue.component('default-layout', Default)
+Vue.component('only-content-layout', OnlyContent)
 Vue.config.productionTip = false
+
 
 new Vue({
   vuetify,

@@ -12,6 +12,8 @@ export const newToken = user => {
   })
 }
 
+export const newTokenExpiry = () => new Date(new Date().getTime() + JWT_EXPIRES * 60 * 1000)
+
 export const verifyToken = token =>
   new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET, (err, payload) => {
@@ -19,8 +21,6 @@ export const verifyToken = token =>
       resolve(payload)
     })
   })
-
-export const newTokenExpiry = () => new Date(new Date().getTime() + JWT_EXPIRES * 60 * 1000)
 
 export const signup = async (req, res) => {
   if (!req.body.email || !req.body.password) {

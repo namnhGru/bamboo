@@ -72,7 +72,7 @@ export default {
       }
     },
     async signInFlow() {
-      const {data: {token, tokenExpiry}} = await axios.post('http://localhost:2000/signin', {
+      const {data: {token, tokenExpiry}} = await axios.post(`${process.env.VUE_APP_EXPRESS_API}/signin`, {
         email: this.email,
         password: this.password
       }, { withCredentials: true})

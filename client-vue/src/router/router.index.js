@@ -8,15 +8,27 @@ import { store } from '../store/auth.store'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: '/dashboard'},
-  { path: '/signin', component: SignIn, beforeEnter: (to, from, next) => {
-    if (store.getters.currentToken && from.path != '/signin') {
-      next(from.path)
-    } else {
-      next();
+  { 
+    path: '/',
+    redirect: '/dashboard'
+  },
+  { path: '/signin',
+    component: SignIn,
+    meta: {
+      layout: 'only-content'
+    },
+    beforeEnter: (to, from, next) => {
+      if (store.getters.currentToken && from.path != '/signin') {
+        next(from.path)
+      } else {
+        next();
+      }
     }
-  }},
-  { path: '/dashboard', component: Dashboard },
+  },
+  { 
+    path: '/dashboard', 
+    component: Dashboard 
+  },
 ]
 
 export const router = new VueRouter({
@@ -50,7 +62,7 @@ export async function silentRefresh() {
     store.commit('changeInMemoryToken', '')
     try {
       axios.defaults.withCredentials = true
-      const { data: {token, tokenExpiry} } = await axios.post('http://localhost:2000/refresh_token', store.getters.currentUser )
+      const { data: {token, tokenExpiry} } = await axios.post(`${process.env.VUE_APP_EXPRESS_API}/refresh_token`, store.getters.currentUser )
       store.commit('changeInMemoryToken', token)
       store.commit('changeInMemoryTokenExpiry', tokenExpiry)
     } catch (err) {
