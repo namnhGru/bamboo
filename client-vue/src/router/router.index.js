@@ -31,6 +31,10 @@ const routes = [
     path: '/setting', 
     component: () => import('../views/Setting.vue') 
   },
+  { 
+    path: '/setting/drawer', 
+    component: () => import('../views/SettingDrawer.vue') 
+  },
 ]
 
 export const router = new VueRouter({

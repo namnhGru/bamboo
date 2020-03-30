@@ -1,10 +1,11 @@
 <template>
   <div>
     <v-row dense wrap>
-      <v-col>
         <v-card
           color="#385F73"
           dark
+          class="mr-2 mb-2"
+          width="525"
         >
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
@@ -20,19 +21,19 @@
               size="125"
               tile
             >
-              <v-img src=""></v-img>
+              <v-icon x-large>mdi-earth</v-icon>
             </v-avatar>
           </div>
         </v-card>
-      </v-col>
 
-      <v-col
-        v-for="(feature, i) in features"
-        :key="i"
-      >
         <v-card
           color="primary"
           dark
+          v-for="(feature, i) in settingFeatures"
+          :key="i"
+          class="mr-2 mb-2"
+          width="525"
+          @click="goToSpecialSetting(feature.link)"
         >
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
@@ -53,7 +54,6 @@
             </v-avatar>
           </div>
         </v-card>
-      </v-col>
     </v-row>
   </div>
 </template>
@@ -67,29 +67,19 @@ export default {
   },
   computed: {
     settingFeatures() {
-      return this.features.map(({name1, icon, setting }) => ({
+      return this.features.map(({name1, icon, setting, link }) => ({
         name1,
         icon,
-        setting
+        setting,
+        link: `/setting${link}`
       }))
     }
   },
-  data: () => ({
-    items: [
-      {
-        color: '#1F7087',
-        src: 'https://cdn.vuetifyjs.com/images/cards/foster.jpg',
-        title: 'Supermodel',
-        artist: 'Foster the People',
-      },
-      {
-        color: '#952175',
-        src: 'https://cdn.vuetifyjs.com/images/cards/halcyon.png',
-        title: 'Halcyon Days',
-        artist: 'Ellie Goulding',
-      },
-    ],
-  }),
+  methods: {
+    goToSpecialSetting(url) {
+      this.$router.push(url)
+    }
+  }
 }
 </script>
 

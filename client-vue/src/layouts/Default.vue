@@ -1,10 +1,10 @@
 <template>
   <v-row>
-    <app-drawer :features="features"></app-drawer>
+    <app-drawer :features="drawerFeatures"></app-drawer>
     <v-content>
       <v-col class="ma-0 pl-5 pr-10">
         <app-toolbar></app-toolbar>
-        <app-bread-crumb :features="breadcrumbFeature"></app-bread-crumb>
+        <app-bread-crumb></app-bread-crumb>
           <v-container class="ma-3 px-0">
             <slot :features="features"></slot>
           </v-container>
@@ -32,8 +32,8 @@ export default {
       'currentUser',
       'currentToken'
     ]),
-    breadcrumbFeature() {
-      return this.features.filter( ({link}) => this.$route.path == link )
+    drawerFeatures() {
+      return this.features.filter(({ drawer }) => drawer == true)
     }
   },
   watch: {
@@ -48,7 +48,7 @@ export default {
       if (this.currentToken) {
         axios.defaults.headers.common.authorization = `Bearer ${this.currentToken}`
         const {data} = await axios.get(`${process.env.VUE_APP_EXPRESS_API}/menu`)  
-        this.features = data.data
+        this.features = data.data.sort((a, b) => a.order - b.order)
       }
     }
   },
