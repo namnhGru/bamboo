@@ -6,7 +6,7 @@
         <app-toolbar></app-toolbar>
         <app-bread-crumb></app-bread-crumb>
           <v-container class="ma-3 px-0">
-            <slot :features="features"></slot>
+            <router-view></router-view>
           </v-container>
         <app-footer></app-footer>
       </v-col>
@@ -25,15 +25,16 @@ export default {
     AppBreadCrumb: () => import('../components/AppBreadCrumb.vue')
   },
   data: () => ({
-    features: [], 
+    drawers: [],
   }),
   computed: {
     ...mapGetters([
       'currentUser',
-      'currentToken'
+      'currentToken',
+      'currentDrawers'
     ]),
     drawerFeatures() {
-      return this.features.filter(({ drawer }) => drawer == true)
+      return this.currentDrawers.filter(({ drawer }) => drawer == true)
     }
   },
   watch: {
@@ -47,10 +48,9 @@ export default {
     async getFeatures() {
       if (this.currentToken) {
         axios.defaults.headers.common.authorization = `Bearer ${this.currentToken}`
-        const {data} = await axios.get(`${process.env.VUE_APP_EXPRESS_API}/menu`)  
-        this.features = data.data.sort((a, b) => a.order - b.order)
+        this.$store.dispatch('getNewDrawerList')
       }
-    }
+    },
   },
   created() {
     this.getFeatures()

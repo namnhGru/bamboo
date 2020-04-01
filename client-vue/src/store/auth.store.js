@@ -1,8 +1,4 @@
-import Vuex from 'vuex'
-import Vue from 'vue'
-
-Vue.use(Vuex)
-export const store = new Vuex.Store({
+export const auth = {
   state: {
     inMemoryToken: '',
     inMemoryTokenExpiry: new Date(),
@@ -24,4 +20,4 @@ export const store = new Vuex.Store({
     currentTokenExpiry: state => state.inMemoryTokenExpiry,
     currentUser: state => state.user
   }
-})
+}

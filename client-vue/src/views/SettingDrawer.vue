@@ -1,13 +1,19 @@
 <template>
   <div>
-    <app-table></app-table>
+    <app-setting :drawers="currentDrawers"></app-setting>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   components: {
-    AppTable: () => import('../components/AppTable.vue')
+    AppSetting: () => import('../components/AppSetting.vue')
+  },
+  computed: {
+    ...mapGetters([
+      'currentDrawers'
+    ]),
   }
 }
 </script>

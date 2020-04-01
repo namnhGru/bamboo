@@ -21,7 +21,7 @@ export const getAll = collection => (req, res) => {
 }
 
 export const updateOne = collection => (req, res) => {
-  collection.updateOne(oldData, newData)
+  collection.updateOne({ _id: req.params.id }, req.body)
     .then(data => {
       res.status(200).json({ data: data })
     })

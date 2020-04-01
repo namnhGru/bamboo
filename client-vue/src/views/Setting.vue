@@ -59,15 +59,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  props: {
-    features: {
-      type: Array
-    }
-  },
   computed: {
+    ...mapGetters([
+      'currentDrawers'
+    ]),
     settingFeatures() {
-      return this.features.map(({name1, icon, setting, link }) => ({
+      return this.currentDrawers.map(({name1, icon, setting, link }) => ({
         name1,
         icon,
         setting,
