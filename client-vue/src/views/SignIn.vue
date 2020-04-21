@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
   name: 'SignIn',
   data: () => ({
@@ -62,27 +61,20 @@ export default {
     password: '',
   }),
   methods: {
-    signin() {
+    async signin() {
       window.localStorage.setItem('login', Date.now())
-      this.signInFlow()
+      await this.$store.dispatch('signin', { email: this.email, password: this.password })
     },
-    syncSignin(event) {
+    async syncSignin(event) {
       if (event.key == 'login') {
-        this.signInFlow()
+        await this.$store.dispatch('signin', { email: this.email, password: this.password })
       }
     },
-    async signInFlow() {
-      const {data: {token, tokenExpiry}} = await axios.post(`${process.env.VUE_APP_EXPRESS_API}/signin`, {
-        email: this.email,
-        password: this.password
-      }, { withCredentials: true})
-      this.$store.commit('changeInMemoryToken', token)
-      this.$store.commit('changeInMemoryTokenExpiry', tokenExpiry)
-      this.$store.commit('changeUser', {
-        email: this.email,
-      })
-      axios.defaults.headers.common.authorization = `Bearer ${this.$store.getters.currentToken}`
-      if (this.$route.path !== '/dashboard') this.$router.push('/dashboard').catch(console.error)
+  },
+  created() {
+    if (!this.$store.getters.getAppStart) {
+      this.$store.dispatch('silentRefresh')
+      this.$store.commit('changeAppStart')
     }
   },
   mounted() {

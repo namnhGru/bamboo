@@ -7,6 +7,7 @@ var menuSchema = new Schema({
   setting: String,
   link: String,
   drawer: Boolean,
+  unchangable: Boolean,
   order: {
     type: Number,
     required: true,

@@ -1,22 +1,25 @@
 import VueRouter from 'vue-router'
 import Vue from 'vue'
 import { store } from '../store/index.store'
-import { routerRefreshToken } from '../utils/refresh.token'
+// import { routerRefreshToken } from '../utils/refresh.token'
 
 Vue.use(VueRouter)
 
 const routes = [
   { 
     path: '/',
+    name: 'Root',
     redirect: '/dashboard'
   },
-  { path: '/signin',
+  { 
+    path: '/signin',
+    name: 'SignIn',
     component: () => import('../views/SignIn.vue'),
     meta: {
       layout: 'only-content'
     },
     beforeEnter: (to, from, next) => {
-      if (store.getters.currentToken && from.path != '/signin') {
+      if (store.getters.getAuthInfo.token && from.path != '/signin') {
         next(from.path)
       } else {
         next();
@@ -25,14 +28,17 @@ const routes = [
   },
   { 
     path: '/dashboard', 
+    name: 'Dashboard',
     component: () => import('../views/Dashboard.vue')
   },
   { 
     path: '/setting', 
+    name: 'Setting',
     component: () => import('../views/Setting.vue') 
   },
   { 
     path: '/setting/drawer', 
+    name: 'Drawer',
     component: () => import('../views/SettingDrawer.vue') 
   },
 ]
@@ -42,9 +48,11 @@ export const router = new VueRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  await routerRefreshToken()
-  const currentToken = store.getters.currentToken
-  if (!currentToken && to.path != '/signin' ) {
+  if (to.path != '/signin' || from.path != '/signin') {
+    // await routerRefreshToken()
+  }
+  const { token } = store.getters.getAuthInfo
+  if (!token && to.path != '/signin' ) {
     next('/signin')
   } else {
     next()

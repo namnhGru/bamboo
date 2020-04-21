@@ -45,7 +45,7 @@ export const refreshToken = async (req, res) => {
       res.status(200).json({ 
         token: newToken(user),
         tokenExpiry: newTokenExpiry(),
-        user: user.email
+        userInfo: user.email
       }) 
     } else {
       res.status(400).end()

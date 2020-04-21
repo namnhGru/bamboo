@@ -14,7 +14,6 @@ import cookieParser from 'cookie-parser'
 const app = express();
 app.use(json())
 app.use(urlencoded({ extended: true }))
-// app.disable('x-powered-by')
 app.use(cookieParser())
 
 app.use(cors({

@@ -8,6 +8,7 @@
           <v-container class="ma-3 px-0">
             <router-view></router-view>
           </v-container>
+        <app-snack-bar></app-snack-bar>
         <app-footer></app-footer>
       </v-col>
     </v-content>
@@ -16,9 +17,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import axios from "axios"
 export default {
   components: {
+    AppSnackBar: () => import('../components/AppSnackBar.vue'),
     AppDrawer: () => import('../components/AppDrawer.vue'),
     AppToolbar: () => import('../components/AppToolbar.vue'),
     AppFooter: () => import('../components/AppFooter.vue'),
@@ -29,31 +30,15 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'currentUser',
-      'currentToken',
+      'authInfo',
       'currentDrawers'
     ]),
     drawerFeatures() {
       return this.currentDrawers.filter(({ drawer }) => drawer == true)
     }
   },
-  watch: {
-    currentUser(newState) {
-      if (Object.keys(newState).length) {
-        this.getFeatures()
-      }
-    }
-  },
-  methods: {
-    async getFeatures() {
-      if (this.currentToken) {
-        axios.defaults.headers.common.authorization = `Bearer ${this.currentToken}`
-        this.$store.dispatch('getNewDrawerList')
-      }
-    },
-  },
   created() {
-    this.getFeatures()
+    this.$store.dispatch('getNewDrawerList')
   }
 }
 </script>

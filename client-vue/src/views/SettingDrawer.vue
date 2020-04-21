@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h4>Show on menu</h4>
     <app-setting :drawers="currentDrawers"></app-setting>
   </div>
 </template>
