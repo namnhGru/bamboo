@@ -78,7 +78,6 @@ export const auth = {
     },
 
     async silentRefresh({ commit, dispatch }) {
-      console.log('run silent refresh')
       commit('changeAuthInfo', {})
       try {
         AxiosInstance.defaults.withCredentials = true

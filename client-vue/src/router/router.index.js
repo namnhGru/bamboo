@@ -38,8 +38,13 @@ const routes = [
   },
   { 
     path: '/setting/drawer', 
-    name: 'Drawer',
+    name: 'SettingDrawer',
     component: () => import('../views/SettingDrawer.vue') 
+  },
+  { 
+    path: '/drawer', 
+    name: 'Drawer',
+    component: () => import('../views/Drawer.vue') 
   },
 ]
 
